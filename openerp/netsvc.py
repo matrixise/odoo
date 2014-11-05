@@ -185,7 +185,7 @@ def init_logger():
 
     if tools.config['log_db']:
         postgresqlHandler = PostgreSQLHandler()
-        postgresqlHandler.setLevel(25)
+        postgresqlHandler.setLevel(logging.DEBUG)
         logging.getLogger().addHandler(postgresqlHandler)
 
     # Configure loggers levels
