@@ -19,7 +19,7 @@
 #
 ##############################################################################
 
-import cStringIO
+from io import StringIO
 import csv
 import logging
 import os.path
@@ -33,9 +33,9 @@ import time
 import openerp
 import openerp.release
 import openerp.workflow
-from yaml_import import convert_yaml_import
+from .yaml_import import convert_yaml_import
 
-import assertion_report
+from . import assertion_report
 
 _logger = logging.getLogger(__name__)
 
@@ -51,14 +51,14 @@ except:
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from lxml import etree, builder
-import misc
-from config import config
-from translate import _
+from . import misc
+from . config import config
+from . translate import _
 
 # List of etree._Element subclasses that we choose to ignore when parsing XML.
-from misc import SKIPPED_ELEMENT_TYPES
+from . misc import SKIPPED_ELEMENT_TYPES
 
-from misc import unquote
+from . misc import unquote
 
 from openerp import SUPERUSER_ID
 
@@ -66,7 +66,7 @@ from openerp import SUPERUSER_ID
 # almost everywhere, which is ok because it supposedly comes
 # from trusted data, but at least we make it obvious now.
 unsafe_eval = eval
-from safe_eval import safe_eval as eval
+from . safe_eval import safe_eval as eval
 
 class ParseError(Exception):
     def __init__(self, msg, text, filename, lineno):
@@ -851,10 +851,10 @@ form: module.record_id""" % (xml_id,)
                 if rec.tag in self._tags:
                     try:
                         self._tags[rec.tag](self.cr, rec, n, mode=mode)
-                    except Exception, e:
+                    except Exception as e:
                         self.cr.rollback()
                         exc_info = sys.exc_info()
-                        raise ParseError, (misc.ustr(e), etree.tostring(rec).rstrip(), rec.getroottree().docinfo.URL, rec.sourceline), exc_info[2]
+                        raise ParseError((misc.ustr(e), etree.tostring(rec).rstrip(), rec.getroottree().docinfo.URL, rec.sourceline), exc_info[2])
         return True
 
     def __init__(self, cr, module, idref, mode, report=None, noupdate=False):
@@ -925,7 +925,7 @@ def convert_csv_import(cr, module, fname, csvcontent, idref=None, mode='init',
     #remove folder path from model
     head, model = os.path.split(model)
 
-    input = cStringIO.StringIO(csvcontent) #FIXME
+    input = StringIO(csvcontent) #FIXME
     reader = csv.reader(input, quotechar='"', delimiter=',')
     fields = reader.next()
     fname_partial = ""

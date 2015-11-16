@@ -21,16 +21,14 @@
 
 import openerp
 
-import interface
-import print_xml
-import print_fnc
-import custom
-import render
-import int_to_text
-
-import report_sxw
-
-import printscreen
+from . import interface
+from . import print_xml
+from . import print_fnc
+from . import custom
+from . import render
+from . import int_to_text
+from . import report_sxw
+from . import printscreen
 
 def render_report(cr, uid, ids, name, data, context=None):
     """

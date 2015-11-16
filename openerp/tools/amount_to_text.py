@@ -181,7 +181,7 @@ def amount_to_text(nbr, lang='fr', currency='euro'):
     
     if not _translate_funcs.has_key(lang):
 #TODO: use logger   
-        print "WARNING: no translation function found for lang: '%s'" % (lang,)
+        print("WARNING: no translation function found for lang: '%s'" % (lang,))
 #TODO: (default should be en) same as above
         lang = 'fr'
     return _translate_funcs[lang](abs(nbr), currency)
@@ -192,11 +192,11 @@ if __name__=='__main__':
     lang = 'nl'
     if len(argv) < 2:
         for i in range(1,200):
-            print i, ">>", amount_to_text(i, lang)
+            print(i, ">>", amount_to_text(i, lang))
         for i in range(200,999999,139):
-            print i, ">>", amount_to_text(i, lang)
+            print(i, ">>", amount_to_text(i, lang))
     else:
-        print amount_to_text(int(argv[1]), lang)
+        print(amount_to_text(int(argv[1]), lang))
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

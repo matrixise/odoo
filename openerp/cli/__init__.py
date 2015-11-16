@@ -28,18 +28,20 @@ class Command(object):
 class Help(Command):
     """Display the list of available commands"""
     def run(self, args):
-        print "Available commands:\n"
+        print("Available commands:\n")
         padding = max([len(k) for k in commands.keys()]) + 2
         for k, v in commands.items():
-            print "    %s%s" % (k.ljust(padding, ' '), v.__doc__ or '')
-        print "\nUse '%s <command> --help' for individual command help." % sys.argv[0].split(os.path.sep)[-1]
+            print("    %s%s" % (k.ljust(padding, ' '), v.__doc__ or ''))
+        print("\nUse '%s <command> --help' for individual command help." % sys.argv[0].split(os.path.sep)[-1])
 
-import server
-import deploy
-import scaffold
-import start
+from . import server
+from . import deploy
+from . import scaffold
+from . import start
 
 def main():
+    import pdb
+    pdb.set_trace()
     args = sys.argv[1:]
 
     # The only shared option is '--addons-path=' needed to discover additional

@@ -24,15 +24,15 @@ import logging.handlers
 import os
 import platform
 import pprint
-import release
+from . import release
 import sys
 import threading
 
 import psycopg2
 
 import openerp
-import sql_db
-import tools
+from . import sql_db
+from . import tools
 
 _logger = logging.getLogger(__name__)
 

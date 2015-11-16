@@ -260,7 +260,7 @@ class NewId(object):
     def __nonzero__(self):
         return False
 
-IdType = (int, long, basestring, NewId)
+IdType = (int, str, NewId)
 
 
 # maximum number of prefetched records
@@ -1013,7 +1013,7 @@ class BaseModel(object):
                     if context.get('defer_parent_store_computation'):
                         self._parent_store_compute(cr)
                     cr.commit()
-        except Exception, e:
+        except Exception as e:
             cr.rollback()
             return -1, {}, 'Line %d : %s' % (position + 1, tools.ustr(e)), ''
 
@@ -1057,7 +1057,7 @@ class BaseModel(object):
                 context=context, log=messages.append):
             try:
                 cr.execute('SAVEPOINT model_load_save')
-            except psycopg2.InternalError, e:
+            except psycopg2.InternalError as e:
                 # broken transaction, exit and hope the source error was
                 # already logged
                 if not any(message['type'] == 'error' for message in messages):
@@ -1069,17 +1069,17 @@ class BaseModel(object):
                      current_module, record, mode=mode, xml_id=xid,
                      noupdate=noupdate, res_id=id, context=context))
                 cr.execute('RELEASE SAVEPOINT model_load_save')
-            except psycopg2.Warning, e:
+            except psycopg2.Warning as e:
                 messages.append(dict(info, type='warning', message=str(e)))
                 cr.execute('ROLLBACK TO SAVEPOINT model_load_save')
-            except psycopg2.Error, e:
+            except psycopg2.Error as e:
                 messages.append(dict(
                     info, type='error',
                     **PGERROR_TO_OE[e.pgcode](self, fg, info, e)))
                 # Failed to write, log to messages, rollback savepoint (to
                 # avoid broken transaction) and keep going
                 cr.execute('ROLLBACK TO SAVEPOINT model_load_save')
-            except Exception, e:
+            except Exception as e:
                 message = (_('Unknown error during import:') +
                            ' %s: %s' % (type(e), unicode(e)))
                 moreinfo = _('Resolve other errors first')
@@ -1250,7 +1250,7 @@ class BaseModel(object):
                 valid = names and not (set(names) & field_names)
                 valid = valid or fun(self._model, cr, uid, ids)
                 extra_error = None
-            except Exception, e:
+            except Exception as e:
                 _logger.debug('Exception while validating constraint', exc_info=True)
                 valid = False
                 extra_error = tools.ustr(e)
@@ -1276,9 +1276,9 @@ class BaseModel(object):
             if set(check._constrains) & field_names:
                 try:
                     check(self)
-                except ValidationError, e:
+                except ValidationError as e:
                     raise
-                except Exception, e:
+                except Exception as e:
                     raise ValidationError("Error while validating constraint\n\n%s" % tools.ustr(e))
 
     @api.model
@@ -6127,7 +6127,7 @@ PGERROR_TO_OE = defaultdict(
     '23505': convert_pgerror_23505,
 })
 
-def _normalize_ids(arg, atoms={int, long, str, unicode, NewId}):
+def _normalize_ids(arg, atoms={int, str, NewId}):
     """ Normalizes the ids argument for ``browse`` (v7 and v8) to a tuple.
 
     Various implementations were tested on the corpus of all browse() calls

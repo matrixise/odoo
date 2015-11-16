@@ -41,7 +41,7 @@ import functools
 import logging
 import pytz
 import re
-import xmlrpclib
+import xmlrpc.client
 from operator import itemgetter
 from contextlib import contextmanager
 from psycopg2 import Binary
@@ -377,10 +377,10 @@ class html(text):
         args['strip_style'] = self._strip_style
         return args
 
-import __builtin__
+import builtins
 
 def _symbol_set_float(self, x):
-    result = __builtin__.float(x or 0.0)
+    result = builtins.float(x or 0.0)
     digits = self.digits
     if digits:
         precision, scale = digits
@@ -1067,7 +1067,7 @@ def sanitize_binary_value(value):
     # binary fields should be 7-bit ASCII base64-encoded data,
     # but we do additional sanity checks to make sure the values
     # are not something else that won't pass via XML-RPC
-    if isinstance(value, (xmlrpclib.Binary, tuple, list, dict)):
+    if isinstance(value, (xmlrpc.client.Binary, tuple, list, dict)):
         # these builtin types are meant to pass untouched
         return value
 

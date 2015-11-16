@@ -34,8 +34,6 @@ import unittest
 import threading
 from os.path import join as opj
 
-import unittest2
-
 import openerp
 import openerp.tools as tools
 import openerp.release as release
@@ -321,7 +319,7 @@ def load_openerp_module(module_name):
         if info['post_load']:
             getattr(sys.modules['openerp.addons.' + module_name], info['post_load'])()
 
-    except Exception, e:
+    except Exception as e:
         msg = "Couldn't load module %s" % (module_name)
         _logger.critical(msg)
         _logger.critical(e)
@@ -375,7 +373,7 @@ def get_test_modules(module):
     modpath = 'openerp.addons.' + module
     try:
         mod = importlib.import_module('.tests', modpath)
-    except Exception, e:
+    except Exception as e:
         # If module has no `tests` sub-module, no problem.
         if str(e) != 'No module named tests':
             _logger.exception('Can not `import %s`.', module)
@@ -439,14 +437,14 @@ def run_unit_tests(module_name, dbname, position=runs_at_install):
     threading.currentThread().testing = True
     r = True
     for m in mods:
-        tests = unwrap_suite(unittest2.TestLoader().loadTestsFromModule(m))
-        suite = unittest2.TestSuite(itertools.ifilter(position, tests))
+        tests = unwrap_suite(unittest.TestLoader().loadTestsFromModule(m))
+        suite = unittest.TestSuite(itertools.ifilter(position, tests))
 
         if suite.countTestCases():
             t0 = time.time()
             t0_sql = openerp.sql_db.sql_counter
             _logger.info('%s running tests.', m.__name__)
-            result = unittest2.TextTestRunner(verbosity=2, stream=TestStream(m.__name__)).run(suite)
+            result = unittest.TextTestRunner(verbosity=2, stream=TestStream(m.__name__)).run(suite)
             if time.time() - t0 > 5:
                 _logger.log(25, "%s tested in %.2fs, %s queries", m.__name__, time.time() - t0, openerp.sql_db.sql_counter - t0_sql)
             if not result.wasSuccessful():

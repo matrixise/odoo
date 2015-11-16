@@ -53,9 +53,9 @@ class Start(Command):
         # TODO: forbid some database names ? eg template1, ...
         try:
             _create_empty_database(args.db_name)
-        except DatabaseExists, e:
+        except DatabaseExists as e:
             pass
-        except Exception, e:
+        except Exception as e:
             die("Could not create database `%s`. (%s)" % (args.db_name, e))
 
         if '--db-filter' not in cmdargs:
@@ -71,5 +71,5 @@ class Start(Command):
         main(cmdargs)
 
 def die(message, code=1):
-    print >>sys.stderr, message
+    print(message, file=sys.stderr)
     sys.exit(code)

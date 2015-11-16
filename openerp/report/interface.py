@@ -27,8 +27,8 @@ from lxml import etree
 import openerp
 import openerp.tools as tools
 import openerp.modules
-import print_xml
-import render
+from . import print_xml
+from . import render
 import urllib
 
 from openerp import SUPERUSER_ID

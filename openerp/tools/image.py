@@ -22,7 +22,7 @@
 try:
     import cStringIO as StringIO
 except ImportError:
-    import StringIO
+    from io import StringIO
 
 from PIL import Image
 from PIL import ImageEnhance

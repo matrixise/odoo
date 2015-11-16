@@ -19,13 +19,13 @@
 #
 ##############################################################################
 
-import render
-import rml2pdf
-import rml2html as htmlizer
-import rml2txt as txtizer
-import odt2odt as odt
-import html2html as html
-import makohtml2html as makohtml
+from . import render
+from . import rml2pdf
+from . import rml2html as htmlizer
+from . import rml2txt as txtizer
+from . import odt2odt as odt
+from . import html2html as html
+from . import makohtml2html as makohtml
 
 
 class rml(render.render):

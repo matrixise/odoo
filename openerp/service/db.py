@@ -21,7 +21,7 @@ import openerp.release
 import openerp.sql_db
 import openerp.tools
 
-import security
+from . import security
 
 _logger = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ def _initialize_db(id, db_name, demo, lang, user_password):
 
             cr.execute('SELECT login, password FROM res_users ORDER BY login')
             cr.commit()
-    except Exception, e:
+    except Exception as e:
         _logger.exception('CREATE DATABASE failed:')
 
 def dispatch(method, params):
@@ -136,7 +136,7 @@ def exp_drop(db_name):
 
         try:
             cr.execute('DROP DATABASE "%s"' % db_name)
-        except Exception, e:
+        except Exception as e:
             _logger.error('DROP DB: %s failed:\n%s', db_name, e)
             raise Exception("Couldn't drop database %s: %s" % (db_name, e))
         else:
@@ -289,7 +289,7 @@ def exp_rename(old_name, new_name):
         try:
             cr.execute('ALTER DATABASE "%s" RENAME TO "%s"' % (old_name, new_name))
             _logger.info('RENAME DB: %s -> %s', old_name, new_name)
-        except Exception, e:
+        except Exception as e:
             _logger.error('RENAME DB: %s -> %s failed:\n%s', old_name, new_name, e)
             raise Exception("Couldn't rename database %s to %s: %s" % (old_name, new_name, e))
 

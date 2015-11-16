@@ -15,7 +15,6 @@ import subprocess
 import sys
 import threading
 import time
-import unittest2
 
 import werkzeug.serving
 
@@ -216,7 +215,7 @@ class CommonServer(object):
         """
         try:
             sock.shutdown(socket.SHUT_RDWR)
-        except socket.error, e:
+        except socket.error as e:
             if e.errno == errno.EBADF:
                 # Werkzeug > 0.9.6 closes the socket itself (see commit
                 # https://github.com/mitsuhiko/werkzeug/commit/4d8ca089)
@@ -457,7 +456,7 @@ class PreforkServer(CommonServer):
     def pipe_ping(self, pipe):
         try:
             os.write(pipe[1], '.')
-        except IOError, e:
+        except IOError as e:
             if e.errno not in [errno.EAGAIN, errno.EINTR]:
                 raise
 
@@ -505,7 +504,7 @@ class PreforkServer(CommonServer):
     def worker_kill(self, pid, sig):
         try:
             os.kill(pid, sig)
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.ESRCH:
                 self.worker_pop(pid)
 
@@ -543,7 +542,7 @@ class PreforkServer(CommonServer):
                     _logger.critical(msg, wpid)
                     raise Exception(msg % wpid)
                 self.worker_pop(wpid)
-            except OSError, e:
+            except OSError as e:
                 if e.errno == errno.ECHILD:
                     break
                 raise
@@ -580,10 +579,10 @@ class PreforkServer(CommonServer):
                     # empty pipe
                     while os.read(fd, 1):
                         pass
-                except OSError, e:
+                except OSError as e:
                     if e.errno not in [errno.EAGAIN]:
                         raise
-        except select.error, e:
+        except select.error as e:
             if e[0] not in [errno.EINTR]:
                 raise
 
@@ -658,7 +657,7 @@ class PreforkServer(CommonServer):
                 _logger.debug("Multiprocess clean stop")
                 self.stop()
                 break
-            except Exception, e:
+            except Exception as e:
                 _logger.exception(e)
                 self.stop(False)
                 return -1
@@ -691,7 +690,7 @@ class Worker(object):
     def sleep(self):
         try:
             select.select([self.multi.socket], [], [], self.multi.beat)
-        except select.error, e:
+        except select.error as e:
             if e[0] not in [errno.EINTR]:
                 raise
 
@@ -777,7 +776,7 @@ class WorkerHTTP(Worker):
         # receiving the full reply
         try:
             self.server.process_request(client, addr)
-        except IOError, e:
+        except IOError as e:
             if e.errno != errno.EPIPE:
                 raise
         self.request_count += 1
@@ -786,7 +785,7 @@ class WorkerHTTP(Worker):
         try:
             client, addr = self.multi.socket.accept()
             self.process_request(client, addr)
-        except socket.error, e:
+        except socket.error as e:
             if e[0] not in (errno.EAGAIN, errno.ECONNABORTED):
                 raise
 
@@ -904,12 +903,12 @@ def load_test_file_py(registry, test_file):
         if mod_mod:
             mod_path, _ = os.path.splitext(getattr(mod_mod, '__file__', ''))
             if test_path == mod_path:
-                suite = unittest2.TestSuite()
-                for t in unittest2.TestLoader().loadTestsFromModule(mod_mod):
+                suite = unittest.TestSuite()
+                for t in unittest.TestLoader().loadTestsFromModule(mod_mod):
                     suite.addTest(t)
                 _logger.log(logging.INFO, 'running tests %s.', mod_mod.__name__)
                 stream = openerp.modules.module.TestStream()
-                result = unittest2.TextTestRunner(verbosity=2, stream=stream).run(suite)
+                result = unittest.TextTestRunner(verbosity=2, stream=stream).run(suite)
                 success = result.wasSuccessful()
                 if hasattr(registry._assertion_report,'report_result'):
                     registry._assertion_report.report_result(success)

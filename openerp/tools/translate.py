@@ -37,10 +37,10 @@ from datetime import datetime
 from lxml import etree
 from os.path import join
 
-import config
-import misc
-from misc import SKIPPED_ELEMENT_TYPES
-import osutil
+from . import config
+from . import misc
+from . misc import SKIPPED_ELEMENT_TYPES
+from . import osutil
 import openerp
 from openerp import SUPERUSER_ID
 
@@ -738,7 +738,7 @@ def trans_generate(lang, modules, cr):
         elif model=='ir.model.fields':
             try:
                 field_name = encode(obj.name)
-            except AttributeError, exc:
+            except AttributeError as exc:
                 _logger.error("name error in %s: %s", xml_name, str(exc))
                 continue
             objmodel = registry.get(obj.model)

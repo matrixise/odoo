@@ -19,7 +19,7 @@
 #
 ##############################################################################
 
-from rml2txt import parseString, parseNode
+from .rml2txt import parseString, parseNode
 
 
 """ This engine is the minimalistic renderer of RML documents into text files,

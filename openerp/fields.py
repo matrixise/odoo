@@ -25,10 +25,9 @@ from collections import OrderedDict
 from datetime import date, datetime
 from functools import partial
 from operator import attrgetter
-from types import NoneType
 import logging
 import pytz
-import xmlrpclib
+import xmlrpc.client
 
 from openerp.tools import float_round, frozendict, html_sanitize, ustr, OrderedSet
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as DATE_FORMAT
@@ -379,7 +378,7 @@ class Field(object):
             attrs['copy'] = attrs.get('copy', False)
 
         # fix for function fields overridden by regular columns
-        if not isinstance(attrs.get('column'), (NoneType, fields.function)):
+        if not isinstance(attrs.get('column'), (type(None), fields.function)):
             attrs.pop('store', None)
 
         for attr, value in attrs.iteritems():
@@ -1029,7 +1028,7 @@ class Integer(Field):
     def convert_to_read(self, value, use_name_get=True):
         # Integer values greater than 2^31-1 are not supported in pure XMLRPC,
         # so we have to pass them as floats :-(
-        if value and value > xmlrpclib.MAXINT:
+        if value and value > xmlrpc.client.MAXINT:
             return float(value)
         return value
 
@@ -1124,7 +1123,7 @@ class Char(_String):
 
     def _setup_regular(self, env):
         super(Char, self)._setup_regular(env)
-        assert isinstance(self.size, (NoneType, int)), \
+        assert isinstance(self.size, (type(None), int)), \
             "Char field %s with non-integer size %r" % (self, self.size)
 
     def convert_to_cache(self, value, record, validate=True):
@@ -1424,7 +1423,7 @@ class Reference(Selection):
 
     def _setup_regular(self, env):
         super(Reference, self)._setup_regular(env)
-        assert isinstance(self.size, (NoneType, int)), \
+        assert isinstance(self.size, (type(None), int)), \
             "Reference field %s with non-integer size %r" % (self, self.size)
 
     def convert_to_cache(self, value, record, validate=True):
@@ -1546,7 +1545,7 @@ class Many2one(_Relational):
         records._cache[self] = value
 
     def convert_to_cache(self, value, record, validate=True):
-        if isinstance(value, (NoneType, int, long)):
+        if isinstance(value, (type(None), int, long)):
             return record.env[self.comodel_name].browse(value)
         if isinstance(value, BaseModel):
             if value._name == self.comodel_name and len(value) <= 1:

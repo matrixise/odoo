@@ -53,7 +53,7 @@ def _child_get(node, self=None, tagname=None):
                             eval(n.get('rml_except'), {}, self.localcontext)
                         except GeneratorExit:
                             continue
-                        except Exception, e:
+                        except Exception as e:
                             _logger.warning('rml_except: "%s"', n.get('rml_except',''), exc_info=True)
                             continue
                     if n.get('rml_tag'):
@@ -65,7 +65,7 @@ def _child_get(node, self=None, tagname=None):
                             yield n2
                         except GeneratorExit:
                             yield n
-                        except Exception, e:
+                        except Exception as e:
                             _logger.warning('rml_tag: "%s"', n.get('rml_tag',''), exc_info=True)
                             yield n
                     else:
@@ -76,7 +76,7 @@ def _child_get(node, self=None, tagname=None):
                 eval(n.get('rml_except'), {}, self.localcontext)
             except GeneratorExit:
                 continue
-            except Exception, e:
+            except Exception as e:
                 _logger.warning('rml_except: "%s"', n.get('rml_except',''), exc_info=True)
                 continue
         if self and self.localcontext and n.get('rml_tag'):
@@ -89,7 +89,7 @@ def _child_get(node, self=None, tagname=None):
                 tagname = ''
             except GeneratorExit:
                 pass
-            except Exception, e:
+            except Exception as e:
                 _logger.warning('rml_tag: "%s"', n.get('rml_tag',''), exc_info=True)
                 pass
         if (tagname is None) or (n.tag==tagname):
@@ -123,7 +123,7 @@ def _process_text(self, txt):
                         txt = tools.ustr(txt)
                 except Exception:
                     _logger.error("Failed to evaluate expression [[ %s ]] with context %r while rendering report, ignored.", expr, self.localcontext)
-                if isinstance(txt, basestring):
+                if isinstance(txt, str):
                     result += txt
                 elif txt and (txt is not None) and (txt is not False):
                     result += ustr(txt)

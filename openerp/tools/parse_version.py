@@ -93,7 +93,7 @@ if __name__ == '__main__':
                 pv = parse_version(v)
                 pvs.append(pv)
                 if verbose:
-                    print v, pv
+                    print(v, pv)
             reduce(cmp, pvs)
         
         chk(('0', '4.2', '4.2.3.4', '5.0.0-alpha', '5.0.0-rc1', '5.0.0-rc1.1', '5.0.0_rc2', '5.0.0_rc3', '5.0.0'), False)

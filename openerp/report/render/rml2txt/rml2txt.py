@@ -21,10 +21,10 @@
 ##############################################################################
 
 import sys
-import StringIO
+from io import StringIO
 from lxml import etree
 
-import utils
+from . import utils
 
 Font_size= 10.0
 
@@ -482,23 +482,23 @@ def parseString(rml, localcontext=None,fout=None, images=None, path='.',title=No
         fp.close()
         return fout
     else:
-        fp = StringIO.StringIO()
+        fp = StringIO()
         r.render(fp)
         return fp.getvalue()
 
 def trml2pdf_help():
-    print 'Usage: rml2txt input.rml >output.html'
-    print 'Render the standard input (RML) and output an TXT file'
+    print('Usage: rml2txt input.rml >output.html')
+    print('Render the standard input (RML) and output an TXT file')
     sys.exit(0)
 
 if __name__=="__main__":
     if len(sys.argv)>1:
         if sys.argv[1]=='--help':
             trml2pdf_help()
-        print parseString(file(sys.argv[1], 'r').read()).encode('iso8859-7')
+        print(parseString(file(sys.argv[1], 'r').read()).encode('iso8859-7'))
     else:
-        print 'Usage: trml2txt input.rml >output.pdf'
-        print 'Try \'trml2txt --help\' for more information.'
+        print('Usage: trml2txt input.rml >output.pdf')
+        print('Try \'trml2txt --help\' for more information.')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

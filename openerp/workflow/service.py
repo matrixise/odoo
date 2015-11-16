@@ -18,8 +18,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from helpers import Session
-from helpers import Record
+from .helpers import Session
+from .helpers import Record
 
 from openerp.workflow.instance import WorkflowInstance
 # import instance

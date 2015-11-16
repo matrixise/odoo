@@ -19,19 +19,18 @@
 #
 ##############################################################################
 from lxml import etree
-import StringIO
-import cStringIO
+from io import StringIO
 import base64
 from datetime import datetime
 import os
 import re
 import time
-from interface import report_rml
-import preprocess
+from . interface import report_rml
+from . import preprocess
 import logging
 import openerp.tools as tools
 import zipfile
-import common
+from . import common
 
 import openerp
 from openerp import SUPERUSER_ID
@@ -453,10 +452,10 @@ class report_sxw(report_rml, preprocess.report):
                     from pyPdf import PdfFileWriter, PdfFileReader
                     output = PdfFileWriter()
                     for r in results:
-                        reader = PdfFileReader(cStringIO.StringIO(r[0]))
+                        reader = PdfFileReader(StringIO(r[0]))
                         for page in range(reader.getNumPages()):
                             output.addPage(reader.getPage(page))
-                    s = cStringIO.StringIO()
+                    s = StringIO()
                     output.write(s)
                     return s.getvalue(), results[0][1]
         return self.create_single_pdf(cr, uid, ids, data, report_xml, context)
@@ -496,7 +495,7 @@ class report_sxw(report_rml, preprocess.report):
             # See also osv.fields.sanitize_binary_value()
             binary_report_content = report_xml.report_sxw_content.encode("latin1")
 
-        sxw_io = StringIO.StringIO(binary_report_content)
+        sxw_io = StringIO(binary_report_content)
         sxw_z = zipfile.ZipFile(sxw_io, mode='r')
         rml = sxw_z.read('content.xml')
         meta = sxw_z.read('meta.xml')
@@ -590,7 +589,7 @@ class report_sxw(report_rml, preprocess.report):
                 rml_file.close()
 
         #created empty zip writing sxw contents to avoid duplication
-        sxw_out = StringIO.StringIO()
+        sxw_out = StringIO()
         sxw_out_zip = zipfile.ZipFile(sxw_out, mode='w')
         sxw_template_zip = zipfile.ZipFile (sxw_io, 'r')
         for item in sxw_template_zip.infolist():

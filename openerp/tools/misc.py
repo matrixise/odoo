@@ -39,9 +39,9 @@ import werkzeug.utils
 import zipfile
 from collections import defaultdict, Mapping, OrderedDict
 from datetime import datetime
-from itertools import islice, izip, groupby
+from itertools import islice, groupby
 from lxml import etree
-from which import which
+from .which import which
 from threading import local
 import traceback
 
@@ -50,8 +50,8 @@ try:
 except ImportError:
     html2text = None
 
-from config import config
-from cache import *
+from .config import config
+from .cache import *
 from .parse_version import parse_version 
 
 import openerp
@@ -297,7 +297,7 @@ def reverse_enumerate(l):
       File "<stdin>", line 1, in <module>
     StopIteration
     """
-    return izip(xrange(len(l)-1, -1, -1), reversed(l))
+    return zip(range(len(l)-1, -1, -1), reversed(l))
 
 def topological_sort(elems):
     """ Return a list of elements sorted so that their dependencies are listed

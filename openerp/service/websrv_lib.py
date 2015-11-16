@@ -32,9 +32,9 @@
 """
 
 import logging
-import SocketServer
-from BaseHTTPServer import *
-from SimpleHTTPServer import SimpleHTTPRequestHandler
+import socketserver
+from http.server import *
+from http.server import SimpleHTTPRequestHandler
 
 _logger = logging.getLogger(__name__)
 
@@ -55,7 +55,7 @@ class AuthProvider:
         return False
 
     def log(self, msg):
-        print msg
+        print(msg)
 
     def checkRequest(self,handler,path = '/'):
         """ Check if we are allowed to process that request

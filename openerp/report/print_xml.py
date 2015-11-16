@@ -23,7 +23,7 @@ from lxml import etree
 import openerp
 import openerp.tools as tools
 from openerp.tools.safe_eval import safe_eval
-import print_fnc
+from . import print_fnc
 from openerp.osv.orm import BaseModel
 
 class InheritDict(dict):

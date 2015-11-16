@@ -25,10 +25,8 @@ WSGI stack, common code.
 
 """
 
-import httplib
-import urllib
-import xmlrpclib
-import StringIO
+import xmlrpc.client
+from io import StringIO
 
 import errno
 import logging
@@ -43,7 +41,7 @@ import werkzeug.contrib.fixers
 
 import openerp
 import openerp.tools.config as config
-import websrv_lib
+from . import websrv_lib
 
 _logger = logging.getLogger(__name__)
 
@@ -73,8 +71,8 @@ def xmlrpc_return(start_response, service, method, params, string_faultcode=Fals
     # exception handling.
     try:
         result = openerp.http.dispatch_rpc(service, method, params)
-        response = xmlrpclib.dumps((result,), methodresponse=1, allow_none=False, encoding=None)
-    except Exception, e:
+        response = xmlrpc.client.dumps((result,), methodresponse=1, allow_none=False, encoding=None)
+    except Exception as e:
         if string_faultcode:
             response = xmlrpc_handle_exception_string(e)
         else:
@@ -84,60 +82,60 @@ def xmlrpc_return(start_response, service, method, params, string_faultcode=Fals
 
 def xmlrpc_handle_exception_int(e):
     if isinstance(e, openerp.osv.orm.except_orm): # legacy
-        fault = xmlrpclib.Fault(RPC_FAULT_CODE_WARNING, openerp.tools.ustr(e.value))
-        response = xmlrpclib.dumps(fault, allow_none=False, encoding=None)
+        fault = xmlrpc.client.Fault(RPC_FAULT_CODE_WARNING, openerp.tools.ustr(e.value))
+        response = xmlrpc.client.dumps(fault, allow_none=False, encoding=None)
     elif isinstance(e, openerp.exceptions.Warning) or isinstance(e, openerp.exceptions.RedirectWarning):
-        fault = xmlrpclib.Fault(RPC_FAULT_CODE_WARNING, str(e))
-        response = xmlrpclib.dumps(fault, allow_none=False, encoding=None)
+        fault = xmlrpc.client.Fault(RPC_FAULT_CODE_WARNING, str(e))
+        response = xmlrpc.client.dumps(fault, allow_none=False, encoding=None)
     elif isinstance (e, openerp.exceptions.AccessError):
-        fault = xmlrpclib.Fault(RPC_FAULT_CODE_ACCESS_ERROR, str(e))
-        response = xmlrpclib.dumps(fault, allow_none=False, encoding=None)
+        fault = xmlrpc.client.Fault(RPC_FAULT_CODE_ACCESS_ERROR, str(e))
+        response = xmlrpc.client.dumps(fault, allow_none=False, encoding=None)
     elif isinstance(e, openerp.exceptions.AccessDenied):
-        fault = xmlrpclib.Fault(RPC_FAULT_CODE_ACCESS_DENIED, str(e))
-        response = xmlrpclib.dumps(fault, allow_none=False, encoding=None)
+        fault = xmlrpc.client.Fault(RPC_FAULT_CODE_ACCESS_DENIED, str(e))
+        response = xmlrpc.client.dumps(fault, allow_none=False, encoding=None)
     elif isinstance(e, openerp.exceptions.DeferredException):
         info = e.traceback
         # Which one is the best ?
         formatted_info = "".join(traceback.format_exception(*info))
         #formatted_info = openerp.tools.exception_to_unicode(e) + '\n' + info
-        fault = xmlrpclib.Fault(RPC_FAULT_CODE_APPLICATION_ERROR, formatted_info)
-        response = xmlrpclib.dumps(fault, allow_none=False, encoding=None)
+        fault = xmlrpc.client.Fault(RPC_FAULT_CODE_APPLICATION_ERROR, formatted_info)
+        response = xmlrpc.client.dumps(fault, allow_none=False, encoding=None)
     else:
         if hasattr(e, 'message') and e.message == 'AccessDenied': # legacy
-            fault = xmlrpclib.Fault(RPC_FAULT_CODE_ACCESS_DENIED, str(e))
-            response = xmlrpclib.dumps(fault, allow_none=False, encoding=None)
+            fault = xmlrpc.client.Fault(RPC_FAULT_CODE_ACCESS_DENIED, str(e))
+            response = xmlrpc.client.dumps(fault, allow_none=False, encoding=None)
         else:
             info = sys.exc_info()
             # Which one is the best ?
             formatted_info = "".join(traceback.format_exception(*info))
             #formatted_info = openerp.tools.exception_to_unicode(e) + '\n' + info
-            fault = xmlrpclib.Fault(RPC_FAULT_CODE_APPLICATION_ERROR, formatted_info)
-            response = xmlrpclib.dumps(fault, allow_none=None, encoding=None)
+            fault = xmlrpc.client.Fault(RPC_FAULT_CODE_APPLICATION_ERROR, formatted_info)
+            response = xmlrpc.client.dumps(fault, allow_none=None, encoding=None)
     return response
 
 def xmlrpc_handle_exception_string(e):
     if isinstance(e, openerp.osv.orm.except_orm):
-        fault = xmlrpclib.Fault('warning -- ' + e.name + '\n\n' + e.value, '')
-        response = xmlrpclib.dumps(fault, allow_none=False, encoding=None)
+        fault = xmlrpc.client.Fault('warning -- ' + e.name + '\n\n' + e.value, '')
+        response = xmlrpc.client.dumps(fault, allow_none=False, encoding=None)
     elif isinstance(e, openerp.exceptions.Warning):
-        fault = xmlrpclib.Fault('warning -- Warning\n\n' + str(e), '')
-        response = xmlrpclib.dumps(fault, allow_none=False, encoding=None)
+        fault = xmlrpc.client.Fault('warning -- Warning\n\n' + str(e), '')
+        response = xmlrpc.client.dumps(fault, allow_none=False, encoding=None)
     elif isinstance(e, openerp.exceptions.AccessError):
-        fault = xmlrpclib.Fault('warning -- AccessError\n\n' + str(e), '')
-        response = xmlrpclib.dumps(fault, allow_none=False, encoding=None)
+        fault = xmlrpc.client.Fault('warning -- AccessError\n\n' + str(e), '')
+        response = xmlrpc.client.dumps(fault, allow_none=False, encoding=None)
     elif isinstance(e, openerp.exceptions.AccessDenied):
-        fault = xmlrpclib.Fault('AccessDenied', str(e))
-        response = xmlrpclib.dumps(fault, allow_none=False, encoding=None)
+        fault = xmlrpc.client.Fault('AccessDenied', str(e))
+        response = xmlrpc.client.dumps(fault, allow_none=False, encoding=None)
     elif isinstance(e, openerp.exceptions.DeferredException):
         info = e.traceback
         formatted_info = "".join(traceback.format_exception(*info))
-        fault = xmlrpclib.Fault(openerp.tools.ustr(e.message), formatted_info)
-        response = xmlrpclib.dumps(fault, allow_none=False, encoding=None)
+        fault = xmlrpc.client.Fault(openerp.tools.ustr(e.message), formatted_info)
+        response = xmlrpc.client.dumps(fault, allow_none=False, encoding=None)
     else:
         info = sys.exc_info()
         formatted_info = "".join(traceback.format_exception(*info))
-        fault = xmlrpclib.Fault(openerp.tools.exception_to_unicode(e), formatted_info)
-        response = xmlrpclib.dumps(fault, allow_none=None, encoding=None)
+        fault = xmlrpc.client.Fault(openerp.tools.exception_to_unicode(e), formatted_info)
+        response = xmlrpc.client.dumps(fault, allow_none=None, encoding=None)
     return response
 
 def wsgi_xmlrpc(environ, start_response):

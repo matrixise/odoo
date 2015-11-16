@@ -22,7 +22,7 @@
 from openerp.report.render.rml2pdf import utils
 import copy
 import base64
-import cStringIO
+from io import StringIO
 import re
 from reportlab.lib.utils import ImageReader
 

@@ -116,7 +116,7 @@ def html_sanitize(src, silent=True, strict=False, strip_style=False):
         cleaned = cleaned.replace('%5D', ']')
         cleaned = cleaned.replace('&lt;%', '<%')
         cleaned = cleaned.replace('%&gt;', '%>')
-    except etree.ParserError, e:
+    except etree.ParserError as e:
         if 'empty' in str(e):
             return ""
         if not silent:

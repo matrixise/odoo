@@ -18,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-import workitem
+from . import workitem
 from openerp.workflow.helpers import Session
 from openerp.workflow.helpers import Record
 from openerp.workflow.workitem import WorkflowItem
@@ -99,7 +99,7 @@ class WorkflowInstance(object):
         cr.execute('select state,flow_stop from wkf_workitem w left join wkf_activity a on (a.id=w.act_id) where w.inst_id=%s', (instance_id,))
         ok=True
         for r in cr.fetchall():
-            if (r[0]<>'complete') or not r[1]:
+            if r[0] != 'complete' or not r[1]:
                 ok=False
                 break
         if ok:

@@ -20,7 +20,7 @@
 #
 ##############################################################################
 
-import ConfigParser
+import configparser
 import optparse
 import os
 import sys
@@ -29,7 +29,7 @@ import openerp.conf
 import openerp.loglevels as loglevels
 import logging
 import openerp.release as release
-import appdirs
+from . import appdirs
 
 class MyOption (optparse.Option, object):
     """ optparse Option with two additional attributes.
@@ -427,10 +427,10 @@ class configmanager(object):
             if getattr(opt, arg):
                 self.options[arg] = getattr(opt, arg)
             # ... or keep, but cast, the config file value.
-            elif isinstance(self.options[arg], basestring) and self.casts[arg].type in optparse.Option.TYPE_CHECKER:
+            elif isinstance(self.options[arg], str) and self.casts[arg].type in optparse.Option.TYPE_CHECKER:
                 self.options[arg] = optparse.Option.TYPE_CHECKER[self.casts[arg].type](self.casts[arg], arg, self.options[arg])
 
-        if isinstance(self.options['log_handler'], basestring):
+        if isinstance(self.options['log_handler'], str):
             self.options['log_handler'] = self.options['log_handler'].split(',')
         self.options['log_handler'].extend(opt.log_handler)
 
@@ -461,7 +461,7 @@ class configmanager(object):
             if getattr(opt, arg) is not None:
                 self.options[arg] = getattr(opt, arg)
             # ... or keep, but cast, the config file value.
-            elif isinstance(self.options[arg], basestring) and self.casts[arg].type in optparse.Option.TYPE_CHECKER:
+            elif isinstance(self.options[arg], str) and self.casts[arg].type in optparse.Option.TYPE_CHECKER:
                 self.options[arg] = optparse.Option.TYPE_CHECKER[self.casts[arg].type](self.casts[arg], arg, self.options[arg])
 
         self.options['root_path'] = os.path.abspath(os.path.expanduser(os.path.expandvars(os.path.dirname(openerp.__file__))))
@@ -493,7 +493,7 @@ class configmanager(object):
             # Prevent the timezone to be True. (The config file parsing changes
             # the string 'True' to the boolean value True. It would be probably
             # be better to remove that conversion.)
-            die(not isinstance(self.options['timezone'], basestring),
+            die(not isinstance(self.options['timezone'], str),
                 "Invalid timezone value in configuration or environment: %r.\n"
                 "Please fix this in your configuration." %(self.options['timezone']))
 
@@ -600,7 +600,7 @@ class configmanager(object):
         setattr(parser.values, option.dest, ",".join(ad_paths))
 
     def load(self):
-        p = ConfigParser.ConfigParser()
+        p = configparser.ConfigParser()
         try:
             p.read([self.rcfile])
             for (name,value) in p.items('options'):
@@ -623,11 +623,11 @@ class configmanager(object):
                     self.misc[sec][name] = value
         except IOError:
             pass
-        except ConfigParser.NoSectionError:
+        except configparser.NoSectionError:
             pass
 
     def save(self):
-        p = ConfigParser.ConfigParser()
+        p = configparser.ConfigParser()
         loglevelnames = dict(zip(self._LOGLEVELS.values(), self._LOGLEVELS.keys()))
         p.add_section('options')
         for opt in sorted(self.options.keys()):
@@ -655,7 +655,7 @@ class configmanager(object):
             try:
                 p.write(file(self.rcfile, 'w'))
                 if not rc_exists:
-                    os.chmod(self.rcfile, 0600)
+                    os.chmod(self.rcfile, 600)
             except IOError:
                 sys.stderr.write("ERROR: couldn't write the config file\n")
 
@@ -671,7 +671,7 @@ class configmanager(object):
 
     def __setitem__(self, key, value):
         self.options[key] = value
-        if key in self.options and isinstance(self.options[key], basestring) and \
+        if key in self.options and isinstance(self.options[key], str) and \
                 key in self.casts and self.casts[key].type in optparse.Option.TYPE_CHECKER:
             self.options[key] = optparse.Option.TYPE_CHECKER[self.casts[key].type](self.casts[key], key, self.options[key])
 
@@ -682,7 +682,7 @@ class configmanager(object):
     def addons_data_dir(self):
         d = os.path.join(self['data_dir'], 'addons', release.series)
         if not os.path.exists(d):
-            os.makedirs(d, 0700)
+            os.makedirs(d, 700)
         else:
             assert os.access(d, os.W_OK), \
                 "%s: directory is not writable" % d
@@ -692,7 +692,7 @@ class configmanager(object):
     def session_dir(self):
         d = os.path.join(self['data_dir'], 'sessions')
         if not os.path.exists(d):
-            os.makedirs(d, 0700)
+            os.makedirs(d, 700)
         else:
             assert os.access(d, os.W_OK), \
                 "%s: directory is not writable" % d

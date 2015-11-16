@@ -41,7 +41,7 @@ import openerp.release as release
 import re
 import base64
 from zipfile import PyZipFile, ZIP_DEFLATED
-from cStringIO import StringIO
+from io import StringIO
 
 import logging
 

@@ -19,9 +19,9 @@
 #
 ##############################################################################
 
-import render
+from . import render
 
-from cStringIO import StringIO
+from io import StringIO
 import xml.dom.minidom
 
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table
@@ -81,7 +81,7 @@ if __name__=='__main__':
         </author-list>
     </test>'''
     if s.render():
-        print s.get()
+        print(s.get())
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

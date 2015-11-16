@@ -98,7 +98,7 @@ if __name__=='__main__':
 </story>''')
     a = report()
     result = a.preprocess_rml(node)
-    print etree.tostring(result)
+    print(etree.tostring(result))
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

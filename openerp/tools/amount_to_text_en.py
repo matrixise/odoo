@@ -20,7 +20,7 @@
 ##############################################################################
 
 import logging
-from translate import _
+from .translate import _
 
 _logger = logging.getLogger(__name__)
 
@@ -124,11 +124,11 @@ if __name__=='__main__':
     lang = 'nl'
     if len(argv) < 2:
         for i in range(1,200):
-            print i, ">>", int_to_text(i, lang)
+            print(i, ">>", int_to_text(i, lang))
         for i in range(200,999999,139):
-            print i, ">>", int_to_text(i, lang)
+            print(i, ">>", int_to_text(i, lang))
     else:
-        print int_to_text(int(argv[1]), lang)
+        print(int_to_text(int(argv[1]), lang))
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

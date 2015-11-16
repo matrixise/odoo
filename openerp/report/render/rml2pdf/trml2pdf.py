@@ -26,8 +26,8 @@ import reportlab
 import re
 from reportlab.pdfgen import canvas
 from reportlab import platypus
-import utils
-import color
+from . import utils
+from . import color
 import os
 import logging
 from lxml import etree
@@ -40,11 +40,7 @@ from openerp.tools.misc import file_open
 from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.pagesizes import A4, letter
 
-try:
-    from cStringIO import StringIO
-    _hush_pyflakes = [ StringIO ]
-except ImportError:
-    from StringIO import StringIO
+from io import StringIO
 
 _logger = logging.getLogger(__name__)
 
@@ -1028,7 +1024,7 @@ class _rml_template(object):
                 self.doc_tmpl.build(fis,canvasmaker=NumberedCanvas)
             else:
                 self.doc_tmpl.build(fis)
-        except platypus.doctemplate.LayoutError, e:
+        except platypus.doctemplate.LayoutError as e:
             e.name = 'Print Error'
             e.value = 'The document you are trying to print contains a table row that does not fit on one page. Please try to split it in smaller rows or contact your administrator.'
             raise
@@ -1072,18 +1068,18 @@ def parseString(rml, localcontext=None, fout=None, images=None, path='.', title=
         return fp.getvalue()
 
 def trml2pdf_help():
-    print 'Usage: trml2pdf input.rml >output.pdf'
-    print 'Render the standard input (RML) and output a PDF file'
+    print('Usage: trml2pdf input.rml >output.pdf')
+    print('Render the standard input (RML) and output a PDF file')
     sys.exit(0)
 
 if __name__=="__main__":
     if len(sys.argv)>1:
         if sys.argv[1]=='--help':
             trml2pdf_help()
-        print parseString(file(sys.argv[1], 'r').read()),
+        print(parseString(file(sys.argv[1], 'r').read()))
     else:
-        print 'Usage: trml2pdf input.rml >output.pdf'
-        print 'Try \'trml2pdf --help\' for more information.'
+        print('Usage: trml2pdf input.rml >output.pdf')
+        print('Try \'trml2pdf --help\' for more information.')
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

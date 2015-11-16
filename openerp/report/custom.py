@@ -25,15 +25,15 @@ import time
 import openerp
 import openerp.tools as tools
 from openerp.tools.safe_eval import safe_eval as eval
-import print_xml
-import render
-from interface import report_int
-import common
+from . import print_xml
+from . import render
+from . interface import report_int
+from . import common
 from openerp.osv.osv import except_osv
 from openerp.osv.orm import BaseModel
-from pychart import *
-import misc
-import cStringIO
+# from pychart import *
+from . import misc
+from io import StringIO
 from lxml import etree
 from openerp.tools.translate import _
 
@@ -45,7 +45,7 @@ class external_pdf(render.render):
     def _render(self):
         return self.pdf
 
-theme.use_color = 1
+#theme.use_color = 1
 
 
 #TODO: devrait heriter de report_rml a la place de report_int 
@@ -340,7 +340,7 @@ class report_custom(report_int):
 
     def _create_lines(self, cr, uid, ids, report, fields, results, context):
         pool = openerp.registry(cr.dbname)
-        pdf_string = cStringIO.StringIO()
+        pdf_string = StringIO()
         can = canvas.init(fname=pdf_string, format='pdf')
         
         can.show(80,380,'/16/H'+report['title'])
@@ -444,7 +444,7 @@ class report_custom(report_int):
 
     def _create_bars(self, cr, uid, ids, report, fields, results, context):
         pool = openerp.registry(cr.dbname)
-        pdf_string = cStringIO.StringIO()
+        pdf_string = StringIO()
         can = canvas.init(fname=pdf_string, format='pdf')
         
         can.show(80,380,'/16/H'+report['title'])
@@ -544,7 +544,7 @@ class report_custom(report_int):
         return True
 
     def _create_pie(self, cr, uid, ids, report, fields, results, context):
-        pdf_string = cStringIO.StringIO()
+        pdf_string = StringIO()
         can = canvas.init(fname=pdf_string, format='pdf')
         ar = area.T(size=(350,350), legend=legend.T(),
                     x_grid_style = None, y_grid_style = None)

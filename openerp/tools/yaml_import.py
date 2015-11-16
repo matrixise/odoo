@@ -8,9 +8,9 @@ import logging
 import openerp
 import openerp.sql_db as sql_db
 import openerp.workflow
-import misc
-from config import config
-import yaml_tag
+from . import misc
+from . config import config
+from . import yaml_tag
 import yaml
 import re
 from lxml import etree
@@ -19,9 +19,9 @@ from openerp import SUPERUSER_ID
 # YAML import needs both safe and unsafe eval, but let's
 # default to /safe/.
 unsafe_eval = eval
-from safe_eval import safe_eval as eval
+from .safe_eval import safe_eval as eval
 
-import assertion_report
+from . import assertion_report
 
 _logger = logging.getLogger(__name__)
 
@@ -236,7 +236,7 @@ class YamlInterpreter(object):
                 for test in expressions:
                     try:
                         success = unsafe_eval(test, self.eval_context, RecordDictWrapper(record))
-                    except Exception, e:
+                    except Exception as e:
                         _logger.debug('Exception during evaluation of !assert block in yaml_file %s.', self.filename, exc_info=True)
                         raise YamlImportAbortion(e)
                     if not success:
@@ -249,12 +249,12 @@ class YamlInterpreter(object):
                                 rmsg = ''
                                 try:
                                     lmsg = unsafe_eval(left, self.eval_context, RecordDictWrapper(record))
-                                except Exception, e:
+                                except Exception as e:
                                     lmsg = '<exc>'
 
                                 try:
                                     rmsg = unsafe_eval(right, self.eval_context, RecordDictWrapper(record))
-                                except Exception, e:
+                                except Exception as e:
                                     rmsg = '<exc>'
 
                                 msg += 'values: ! %s %s %s'
@@ -586,11 +586,11 @@ class YamlInterpreter(object):
         try:
             code_obj = compile(statements, self.filename, 'exec')
             unsafe_eval(code_obj, {'ref': self.get_id}, code_context)
-        except AssertionError, e:
+        except AssertionError as e:
             self._log_assert_failure('AssertionError in Python code %s (line %d): %s',
                 python.name, python.first_line, e)
             return
-        except Exception, e:
+        except Exception as e:
             _logger.debug('Exception during evaluation of !python block in yaml_file %s.', self.filename, exc_info=True)
             raise
         else:
@@ -899,7 +899,7 @@ class YamlInterpreter(object):
             is_preceded_by_comment = self._log_node(node, is_preceded_by_comment)
             try:
                 self._process_node(node)
-            except Exception, e:
+            except Exception as e:
                 _logger.exception(e)
                 raise
 
