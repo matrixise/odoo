@@ -40,8 +40,6 @@ from . import scaffold
 from . import start
 
 def main():
-    import pdb
-    pdb.set_trace()
     args = sys.argv[1:]
 
     # The only shared option is '--addons-path=' needed to discover additional
